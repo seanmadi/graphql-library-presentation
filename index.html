@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>GraphQL Frameworks</title>
+
+		<meta name="description" content="Simple Reveal.js slidedeck template. Source files loaded from jsDelivr.">
+		<meta name="author" content="">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/simple.css" id="theme">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/moon.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			// Load print, pdf stylesheets from jsDelivr
+			var srcUrlPrefix = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/';
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = srcUrlPrefix + (window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css');
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+      <section>
+        <h3>Apollo</h3>
+        <ul>
+          <li>Much lower learning curve</li>
+          <li>Fragments provided to queries via string interpolation</li>
+          <li>Not strict about structure, flexible</li>
+          <li>Queries can be executed anywhere</li>
+          <li>Built on top of redux</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Relay Modern</h3>
+        <ul>
+          <li>Uses GraphQL Relay Specification for queries</li>
+          <li>Much faster from better caching</li>
+          <li>Uses a compiler, relay-compiler, that introduces a build step</li>
+          <li>Colocate fragments with components, called containers</li>
+          <li>Spread fragments are already in scope</li>
+          <li>Strict about structure and naming conventions</li>
+          <li>Use QueryRender component to execute queries</li>
+          <li>Doesn't play well with redux</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Relay Modern Setup</h3>
+
+        <h4>Add dependencies</h4>
+        <pre><code data-trim data-noescape>
+          yarn add react-relay
+          yarn add relay-compiler --dev
+          yarn add babel-plugin-relay --dev
+        </code></pre>
+
+        <h4>Add Relay plugin to Babel</h4>
+        <pre><code data-trim data-noescape>
+          "babel": {
+            "presets": [
+              "react-app"
+            ],
+            "plugins": [
+              "relay"
+            ]
+          },
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>Setup the Environment</h3>
+        <pre><code data-trim data-noescape>
+          import {
+            Environment,
+            Network,
+            RecordSource,
+            Store,
+          } from 'relay-runtime'
+
+          const store = new Store(new RecordSource())
+
+          const network = Network.create((operation, variables) => (
+            fetch('https://api.graph.cool/relay/v1/cj8p38ptb017r0163ry9lua50', {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                query: operation.text,
+                variables,
+              }),
+            }).then(response => (
+              response.json()
+            ))
+          ))
+
+          const environment = new Environment({
+            network,
+            store,
+          })
+
+          export default environment
+        </code></pre>
+      </section>
+			</div><!-- .slides -->
+		</div><!-- .reveal -->
+
+		<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.min.js"></script>
+
+		<script>
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins, loaded from jsDelivr
+				dependencies: [
+					{ src: srcUrlPrefix + 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: srcUrlPrefix + 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: srcUrlPrefix + 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: srcUrlPrefix + 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: srcUrlPrefix + 'plugin/zoom-js/zoom.js', async: true },
+					{ src: srcUrlPrefix + 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
