@@ -12,7 +12,10 @@
     <body>
 
         <div class="reveal">
-            <div class="slides"><section  data-markdown><script type="text/template">### Apollo
+            <div class="slides"><section  data-markdown><script type="text/template">### Comparing GraphQL Libraries
+#### Apollo and Relay Modern
+</script></section><section  data-markdown><script type="text/template">
+### Apollo
 * Much lower learning curve
 * Fragments provided to queries via string interpolation
 * Not strict about structure, flexible
@@ -21,13 +24,94 @@
 </script></section><section  data-markdown><script type="text/template">
 ### Relay Modern
 * Uses GraphQL Relay Specification for queries
-* Much faster from better caching
+* Faster from better caching
 * Uses a compiler, relay-compiler, that introduces a build step
 * Colocate fragments with components, called containers
 * Spread fragments are already in scope
 * Strict about structure and naming conventions
 * Use QueryRender component to execute queries
 * Doesn't play well with redux
+</script></section><section  data-markdown><script type="text/template">
+### Apollo Setup
+Add dependencies
+```
+yarn add apollo-client
+yarn add react-apollo
+yarn add graphql-tag
+```
+</script></section><section  data-markdown><script type="text/template">
+### Setup client
+App.js
+```javascript
+import ApolloClient, { createNetworkInterface } from 'apollo-client'
+import { ApolloProvider } from 'react-apollo'
+
+const networkInterface = createNetworkInterface({
+  uri: '__API_ENDPOINT__'
+})
+const client = new ApolloClient({
+  networkInterface
+})
+
+class App extends Component {
+  render() {
+    return (
+      <ApolloProvider client={client}>
+        <ListPage />
+      </ApolloProvider>
+    )
+  }
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+### Add Query to ListPage
+ListPage.js
+```javascript
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
+
+const FeedQuery = gql`query allPosts {
+  allPosts(orderBy: createdAt_DESC) {
+    id
+    name
+  }
+}`
+
+class ListPage extends Component {
+  render () {
+    const { data: { loading, allPosts, refetch }} = this.props
+    if (loading) {
+      return (<div>Loading</div>)
+    }
+    return (
+      <div className="container">
+        <div className="posts">
+          {allPosts.map((post) =>
+            <Post key={post.id} post={post} refresh={() => refetch()} />
+          )}
+        </div>
+      </div>
+    )
+  }
+}
+
+export default graphql(FeedQuery)(ListPage)
+```
+</script></section><section  data-markdown><script type="text/template">
+### Post Component
+Post.js
+```javascript
+class Post extends Component {
+  render () {
+    const { id, name } = this.props.post
+    return (
+      <div key={id} className="post">
+        <h3>{name}</h3>
+      </div>
+    )
+  }
+}
+```
 </script></section><section  data-markdown><script type="text/template">
 ### Relay Modern Setup
 Add dependencies
@@ -186,6 +270,8 @@ Relay-compiler compiles queries into Javascript lazy requires located at
 ```
 ./src/__generated__
 ```
+</script></section><section  data-markdown><script type="text/template">
+# Questions?
 </script></section></div>
         </div>
 
