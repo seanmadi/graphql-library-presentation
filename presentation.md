@@ -1,5 +1,14 @@
-### Comparing GraphQL Libraries
+### Comparing GraphQL Client Libraries in React
 #### Apollo and Relay Modern
+
+---
+
+### Why use a GraphQL Client Library?
+* Constructs HTTP request with query and variables
+* Pluggable with middlewares and afterwares
+* Makes subscriptions easy
+* Caching, keep UI consistent
+* Integrate with React components
 
 ---
 
